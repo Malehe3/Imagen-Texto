@@ -4,36 +4,44 @@ import numpy as np
 import pytesseract
 from PIL import Image
 import os
+import time
+import glob
 from gtts import gTTS
 
-# Función para convertir texto a audio
-def text_to_speech(text, tld):
-    # Verificar si el directorio "temp" existe, si no existe, crearlo
-    if not os.path.exists("temp"):
-        os.makedirs("temp")
-    
-    # Generar archivo de audio
-    tts = gTTS(text, "es", tld, slow=False)
-    try:
-        my_file_name = text[0:20]
-    except:
-        my_file_name = "audio"
-    tts.save(f"temp/{my_file_name}.mp3")
-    return my_file_name, text
+st.title("CocinaFacil - Tu Asistente de Cocina Personalizado")
 
-# Tomar una foto y procesarla
+st.write("¡Hola! Soy ChefIA, tu asistente de cocina personal. Con solo una foto de una receta, puedo convertirla en texto para que puedas escuchar las instrucciones mientras cocinas y así evitar cualquier accidente.")
+
 st.write("Toma una foto")
-img_file_buffer = st.file_uploader("Selecciona una imagen", type=["jpg", "jpeg", "png"])
+img_file_buffer = st.camera_input("Toma una Foto")
 
-# Si se selecciona una imagen
+with st.sidebar:
+    filtro = st.radio("Aplicar Filtro", ('Con Filtro', 'Sin Filtro'))
+
 if img_file_buffer is not None:
-    # Convertir imagen a texto usando OCR (reconocimiento óptico de caracteres)
-    img = Image.open(img_file_buffer)
-    text = pytesseract.image_to_string(img, lang='spa')
+    # To read image file buffer with OpenCV:
+    bytes_data = img_file_buffer.getvalue()
+    cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
+    
+    if filtro == 'Con Filtro':
+         cv2_img = cv2.bitwise_not(cv2_img)
+    else:
+         cv2_img = cv2_img
+    
+    img_rgb = cv2.cvtColor(cv2_img, cv2.COLOR_BGR2RGB)
+    text = pytesseract.image_to_string(img_rgb)
     st.write("Texto obtenido de la imagen:")
     st.write(text) 
 
-    # Convertir texto a audio
+    def text_to_speech(text, tld):
+        tts = gTTS(text, "es", tld, slow=False)
+        try:
+            my_file_name = text[0:20]
+        except:
+            my_file_name = "audio"
+        tts.save(f"temp/{my_file_name}.mp3")
+        return my_file_name, text
+
     if st.button("Convertir texto a audio"):
         result, output_text = text_to_speech(text, "es")
         audio_file = open(f"temp/{result}.mp3", "rb")
@@ -42,6 +50,14 @@ if img_file_buffer is not None:
         st.markdown("## Texto en audio:")
         st.write(output_text)
 
-    
+    def remove_files(n):
+        mp3_files = glob.glob("temp/*mp3")
+        if len(mp3_files) != 0:
+            now = time.time()
+            n_days = n * 86400
+            for f in mp3_files:
+                if os.stat(f).st_mtime < now - n_days:
+                    os.remove(f)
 
+    remove_files(7)
 
