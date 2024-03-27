@@ -40,13 +40,14 @@ def text_to_speech(text, tld):
     tts.save(f"temp/{my_file_name}.mp3")
     return my_file_name, text
 
+
 # Botón para convertir texto a audio
-if st.button("Convertir texto a audio"):
+if st.button("Convertir receta a audio"):
     result, output_text = text_to_speech(text, "es")
     audio_file = open(f"temp/{result}.mp3", "rb")
     audio_bytes = audio_file.read()
     st.audio(audio_bytes, format="audio/mp3", start_time=0)
-    st.markdown(f"## Texto en audio:")
+    st.markdown(f"## Receta:")
     st.write(f" {output_text}")
 
 def remove_files(n):
