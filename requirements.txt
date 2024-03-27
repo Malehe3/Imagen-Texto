@@ -7,4 +7,3 @@ Pillow
 gTTS==2.2.2
 googletrans==3.1.0a0
 gtts
-opencv-python
