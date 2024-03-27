@@ -12,7 +12,6 @@ st.title("CocinaFacil - Tu Asistente de Cocina Personalizado")
 
 st.write("¡Hola! Soy ChefIA, tu asistente de cocina personal. Con solo una foto de una receta, puedo convertirla en texto para que puedas escuchar las instrucciones mientras cocinas y así evitar cualquier accidente.")
 
-st.write("Toma una foto")
 img_file_buffer = st.camera_input("Toma una Foto")
 
 with st.sidebar:
