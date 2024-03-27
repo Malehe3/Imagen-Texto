@@ -11,7 +11,7 @@ from gtts import gTTS
 st.title("CocinaFacil - Tu Asistente de Cocina Personalizado")
 st.write(f"¡Hola Soy ChefIA, tu asistente de cocina personal. Con solo una foto de una receta, puedo convertirla en texto para que puedas escuchar las instrucciones mientras cocinas y así evitar cualquier accidente")
 
-img_file_buffer = st.file_uploader("Toma una Foto", type=['png', 'jpg', 'jpeg'])
+img_file_buffer = st.camera_input("Toma una Foto")
 
 with st.sidebar:
     filtro = st.radio("Aplicar Filtro", ('Con Filtro', 'Sin Filtro'))
@@ -59,4 +59,5 @@ def remove_files(n):
                 os.remove(f)
 
 remove_files(7)
+
 
